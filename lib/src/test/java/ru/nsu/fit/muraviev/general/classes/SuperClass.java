@@ -1,4 +1,4 @@
-package ru.nsu.fit.muraviev.general.Classes;
+package ru.nsu.fit.muraviev.general.classes;
 
 public class SuperClass {
   public void foo() {

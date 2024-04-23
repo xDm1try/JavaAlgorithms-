@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Дана последовательность оценок [2 - 5]. Найти подпоследовательность без оценки < 4 и с максимальным количеством 5 длиной = 7.
+ * Если такая подпоследовательность существует.
+ */
+
 public class Task1 {
 
   public static void main(String[] args) {

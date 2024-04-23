@@ -3,6 +3,10 @@ package ru.nsu.fit.muraviev.tinkoff.tinkoffBackend;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Дана матрица цифр, необходимо её повернуть на 90 вправо.
+ */
+
 public class Task2 {
 
   public static void main(String[] args) {

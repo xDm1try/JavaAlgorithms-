@@ -3,7 +3,7 @@ package ru.nsu.fit.muraviev.tinkoff.tinkoffBackend;
 import java.util.Scanner;
 
 public class Task6 {
-  // TODO 17.04.24
+  // TODO
   public static void main(String[] args) {
     Scanner input = new Scanner(System.in);
     int N = input.nextInt();

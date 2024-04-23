@@ -2,6 +2,10 @@ package ru.nsu.fit.muraviev.tinkoff.tinkoffBackend;
 
 import java.util.*;
 
+/**
+ * Даны пути директорий, необходимо корректно распечатать с отступами.
+ */
+
 public class Task3 {
 
   public static class DirectoryWrapper{

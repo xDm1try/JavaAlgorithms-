@@ -2,6 +2,16 @@ package ru.nsu.fit.muraviev.tinkoff.tinkoffBackend;
 
 import java.util.Scanner;
 
+/**
+ * Дана матрица Nx3, где:
+ *  '.' - свободная клетка
+ *  'W' - кусты, пройти нельзя
+ *  'C' - гриб, +1 балл.
+ *
+ *  Грибник начинает с верхней строчки с любой её клетки и может перемещаться вниз, по-диагонали
+ *
+ */
+
 public class Task5 {
   public static void main(String[] args){
     Scanner input = new Scanner(System.in);
