@@ -7,89 +7,108 @@ import static java.lang.System.exit;
 public class Task5 {
   public static ArrayList<Node> nodes = new ArrayList<>();
   public static ArrayList<Edge> edges = new ArrayList<>();
-  public static void main(String[] args){
+
+  public static void main(String[] args) {
     Scanner input = new Scanner(System.in);
     int N = input.nextInt();
 
-    for(int i = 0; i < N; i++){
+    for (int i = 0; i < N; i++) {
       nodes.add(new Node(i, 'w', Integer.MAX_VALUE));
     }
     int M = input.nextInt();
-    for(int i = 0; i < M; i++){
+    for (int i = 0; i < M; i++) {
       int U = input.nextInt();
       int V = input.nextInt();
       int T = input.nextInt();
-      Edge edge = new Edge(U-1,V-1,T, 0, 0);
+      Edge edge = new Edge(U - 1, V - 1, T, 0, 0);
       edges.add(edge);
-      edge = new Edge(V-1,U-1,T,0, 0);
+      edge = new Edge(V - 1, U - 1, T, 0, 0);
       edges.add(edge);
     }
     int K = input.nextInt();
-    for(int i = 0; i < K; i++){
+    for (int i = 0; i < K; i++) {
       int U = input.nextInt();
       int V = input.nextInt();
       int T = input.nextInt();
       int C = input.nextInt();
-      Edge edge = new Edge(U-1,V-1,T,C, i+1);
+      Edge edge = new Edge(U - 1, V - 1, T, C, i + 1);
       edges.add(edge);
-      edge = new Edge(V-1,U-1,T,C, i+1);
+      edge = new Edge(V - 1, U - 1, T, C, i + 1);
       edges.add(edge);
     }
     int P = input.nextInt();
-    for(int i = 0; i< P; i++){
+    for (int i = 0; i < P; i++) {
       int A = input.nextInt();
       int B = input.nextInt();
       int T = input.nextInt();
-      findPath(A-1,B-1,T, 0, 0);
-      answer.addAll(prevPath.stream().filter(edge -> edge.number != 0 && !answer.contains(edge)).toList());
-      nodes.stream().forEach(node -> {
-        node.state = 'w';
-        node.currentPrice = Integer.MAX_VALUE;
-      });
+      findPath2(A - 1, B - 1, T, 0, 0);
+      answer.addAll(
+          path.stream().filter(edge -> edge.number != 0 && !answer.contains(edge)).toList());
+      nodes.stream()
+          .forEach(
+              node -> {
+                node.state = 'w';
+                node.currentPrice = Integer.MAX_VALUE;
+              });
     }
     System.out.println(answer.size());
-    for(int i = answer.size()-1; i>=0; i--){
+    for (int i = answer.size() - 1; i >= 0; i--) {
       System.out.print(answer.get(i).number + " ");
+      System.out.println();
     }
   }
+
   public static ArrayList<Edge> path = new ArrayList<>();
   public static List<Edge> answer = new ArrayList<>();
-  public static ArrayList<Edge> prevPath = null;
-  public static void findPath(int A, int B, int T, int currentTiming, int currentPrice){
-    if (currentTiming > T){
+  public static Edge edgeToNext;
+
+  public static void findPath2(int A, int B, int T, int currentTiming, int currentPrice) {
+    if (A == B) {
       return;
     }
-    if (A == B){
-      if(prevPath == null){
-        prevPath = new ArrayList<Edge>(path);
-        return;
-      }else{
-        int prevPrice = prevPath.stream().filter(edge -> edge.number != 0 && !answer.contains(edge)).map(edge -> edge.price).reduce(0, Integer::sum);
-        int newPrice = path.stream().filter(edge -> edge.number != 0 && !answer.contains(edge)).map(edge -> edge.price).reduce(0, Integer::sum);
-        if (newPrice < prevPrice){
-          prevPath = new ArrayList<Edge>(path);
-        }
-      }
-      return;
-    }
-    Node node = nodes.get(A);
-    node.state = 'g';
-    node.currentPrice = currentTiming;
-    List<Edge> nextEdges = new ArrayList<>(edges.stream().filter(edg -> nodes.get(edg.from).state == 'g').toList());
-    if (nextEdges.isEmpty()){
+
+    Node nodeA = nodes.get(A);
+    nodeA.currentPrice = currentPrice;
+
+    List<Edge> edgesToNeighbors =
+        edges.stream()
+            .filter(edge -> edge.from == A)
+            .filter(edge -> nodes.get(edge.to).state == 'w')
+            .peek(
+                edge -> {
+                  Node neighbor = nodes.get(edge.to);
+                  neighbor.currentPrice =
+                      Math.min(currentPrice + edge.price, neighbor.currentPrice);
+                })
+            .peek(
+                edge -> {
+                  if (edgeToNext == null || edgeToNext.to == A) {
+                    edgeToNext = edge;
+                  } else {
+                    Node neighbor = nodes.get(edge.to);
+                    Node nextNode = nodes.get(edgeToNext.to);
+                    edgeToNext = neighbor.currentPrice < nextNode.currentPrice ? edge : edgeToNext;
+                  }
+                })
+//            .filter(edge -> currentTiming + edge.time <= T)
+            .sorted(Comparator.comparingInt(o -> o.time))
+            .sorted(Comparator.comparingInt(o -> o.price))
+            .toList();
+
+    if (edgesToNeighbors.isEmpty()) {
       System.out.println(-1);
       exit(0);
     }
-    Collections.sort(nextEdges, (o1, o2) -> o1.price - o2.price);
-    for(Edge edg : nextEdges){
-      if(nodes.get(edg.to).currentPrice > currentPrice + edg.price){
-        path.add(edg);
-        findPath(edg.to, B, T, currentTiming + edg.time, currentPrice + edg.price);
-        path.remove(path.size()-1);
-      }
+
+    nodeA.state = 'b';
+    if (edgeToNext.number != 0) {
+      path.add(edgeToNext);
     }
+    findPath2(
+        edgeToNext.to, B, T, currentTiming + edgeToNext.time, currentPrice + edgeToNext.price);
   }
-  public static class Edge{
+
+  public static class Edge {
     int from;
     int to;
     int time;
@@ -104,16 +123,16 @@ public class Task5 {
       this.number = number;
     }
   }
-  public static class Node{
-    public int name;
+
+  public static class Node {
+    public int number;
     public char state;
     public int currentPrice;
 
-    public Node(int name, char state, int currentPrice) {
-      this.name = name;
+    public Node(int number, char state, int currentPrice) {
+      this.number = number;
       this.state = state;
       this.currentPrice = currentPrice;
     }
   }
-
 }
